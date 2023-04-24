@@ -1,0 +1,11 @@
+# Generic
+bin
+obj
+.vs
+*.user
+
+# Server
+/Src/HM5.Server/Logs
+
+# Other
+/Res

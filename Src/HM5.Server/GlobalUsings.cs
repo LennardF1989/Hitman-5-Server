@@ -1,0 +1,1 @@
+﻿global using HttpMethods = HM5.Server.Enums.HttpMethods;

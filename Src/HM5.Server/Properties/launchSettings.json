@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "HM5.Server": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:80;https://localhost:443"
+    }
+  }
+}
