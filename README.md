@@ -10,11 +10,11 @@ In order to get started with the code, you need to have one of the following IDE
 On top of that, you need to have the [.NET SDK](https://dotnet.microsoft.com/en-us/download) for your OS installed (**not** the Runtime). The current project is based on .NET 6 LTS. You can however install any newer version you like.
 
 ## Getting starting with the hook
+The hook supports both Hitman Absolution and Hitman Sniper Challenge depending on what you set in the `hook.ini`. Both allow to change the WebService URL. Hitman Absolution additionally allows you to skip the launcher.
+
 The dinput8.dll hook is based on C++. It's beyond the scope of this document to explain how to compile that.
 
-Once you have a x32 bit compiled version however, just drop it in the game folder along with the `hook.ini` file, make changes accordingly and start the game.
-
-The hook supports both Hitman Absolution and Hitman Sniper Challenge depending on what you set in the `hook.ini`. Both allow to change the WebService URL. Hitman Absolution additionally allows you to skip the launcher.
+However, you can grab a precompiled copy from the `Bin\Hook` folder on this repository. Just drop it in the game folder along with the default `hook.ini` file, apply the desired changes and start the game.
 
 The hook does not *crack* the games in any sort of way, you still need a legitimate copy in order to make use of this project.
 
@@ -43,7 +43,7 @@ Phase 3:
 
 # Notes about Ids in-game
 - UserId is almost always a 64-bit SteamId. However, to stay on the safe side all UserId-properties are treated as a String.
-- ContractId is considered a String in-game, since `Play_01` is used by the Contracts tutorial. This also has a effect on the LeaderboardId-properties, since that property can be a ContractId if the game wants to receive Contract-specific leaderboards.
+- ContractId is considered a String in-game, since `Play_01` is used by the Contracts tutorial. This also has an effect on the LeaderboardId-properties, since that property can be a ContractId if the game wants to receive Contract-specific leaderboards.
 	- IDEA: Use the hook to change these ID's to a negative number so the data model can keep using Integers.
 
 # Documentation
