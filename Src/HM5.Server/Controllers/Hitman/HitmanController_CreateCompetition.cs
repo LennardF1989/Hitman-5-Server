@@ -1,5 +1,6 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -10,34 +11,31 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _createCompetition = new()
+        [EdmFunctionImport("CreateCompetition", HttpMethods.GET, null)]
+        public class CreateCompetitionRequest : IEdmFunctionImport
         {
-            Name = "CreateCompetition",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "contractId",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "competitionLength",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "allowInvites",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [NormalizedString]
+            [SFunctionParameter("fromId", EdmTypes.String)]
+            public string FromId { get; set; }
+
+            [SplitNormalizedString]
+            [SFunctionParameter("participants", EdmTypes.String)]
+            public List<string> Participants { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("contractId", EdmTypes.String)]
+            public string ContractId { get; set; }
+
+            [SFunctionParameter("competitionLength", EdmTypes.Int32)]
+            public int CompetitionLength { get; set; }
+
+            [SFunctionParameter("allowInvites", EdmTypes.Boolean)]
+            public bool AllowInvites { get; set; }
+        }
 
         [HttpGet]
         [Route("CreateCompetition")]
-        public IActionResult CreateCompetition()
+        public IActionResult CreateCompetition([FromQuery] CreateCompetitionRequest request)
         {
             return Ok();
         }

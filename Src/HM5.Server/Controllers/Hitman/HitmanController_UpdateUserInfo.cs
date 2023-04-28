@@ -1,5 +1,6 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -11,39 +12,28 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _updateUserInfo = new()
+        [EdmFunctionImport("UpdateUserInfo", HttpMethods.GET, null)]
+        public class UpdateUserInfoRequest : IEdmFunctionImport
         {
-            Name = "UpdateUserInfo",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "userid",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "displayName",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "country",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "friends",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [NormalizedString]
+            [SFunctionParameter("userid", EdmTypes.String)]
+            public string UserId { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("displayName", EdmTypes.String)]
+            public string DisplayName { get; set; }
+
+            [SFunctionParameter("country", EdmTypes.Int32)]
+            public int Country { get; set; }
+
+            [SplitNormalizedString]
+            [SFunctionParameter("friends", EdmTypes.String)]
+            public List<string> Friends { get; set; }
+        }
 
         [HttpGet]
         [Route("UpdateUserInfo")]
-        public IActionResult UpdateUserInfo()
+        public IActionResult UpdateUserInfo([FromQuery] UpdateUserInfoRequest request)
         {
             return Ok();
         }

@@ -1,5 +1,6 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -11,24 +12,21 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _getUserWallet = new()
+        [EdmFunctionImport(
+            "GetUserWallet",
+            HttpMethods.GET,
+            null
+        )]
+        public class GetUserWalletRequest : IEdmFunctionImport
         {
-            Name = "GetUserWallet",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "userId",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [NormalizedString]
+            [SFunctionParameter("userId", EdmTypes.String)]
+            public string UserId { get; set; }
+        }
 
         [HttpGet]
         [Route("GetUserWallet")]
-        public IActionResult GetUserWallet()
+        public IActionResult GetUserWallet([FromQuery] GetUserWalletRequest request)
         {
             return JsonOperationValueResponse(1_000_000);
         }

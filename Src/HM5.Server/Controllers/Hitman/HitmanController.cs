@@ -1,7 +1,7 @@
-﻿using HM5.Server.Enums;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
 using HM5.Server.Interfaces;
 using HM5.Server.Models;
-using HM5.Server.Models.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -9,6 +9,29 @@ namespace HM5.Server.Controllers.Hitman
     [Route("hm5")]
     public partial class HitmanController : BaseController
     {
+        public abstract class BaseGetScoresRequest : IEdmFunctionImport
+        {
+            [SFunctionParameter("filter", EdmTypes.Int32)]
+            public int Filter { get; set; }
+
+            [SFunctionParameter("startindex", EdmTypes.Int32)]
+            public int StartIndex { get; set; }
+
+            [SFunctionParameter("range", EdmTypes.Int32)]
+            public int Range { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("userid", EdmTypes.String)]
+            public string UserId { get; set; }
+        }
+
+        public abstract class BaseGetAverageScoresRequest : IEdmFunctionImport
+        {
+            [NormalizedString]
+            [SFunctionParameter("userid", EdmTypes.String)]
+            public string UserId { get; set; }
+        }
+
         public const string SchemaNamespace = "HM5";
 
         //NOTE: Rating seems unused in UI?
@@ -192,47 +215,6 @@ namespace HM5.Server.Controllers.Hitman
             _metadataService = metadataService;
         }
 
-        public static List<EdmFunctionImport> GetEdmFunctionImports()
-        {
-            return new List<EdmFunctionImport>
-            {
-                _updateDLCInfo,
-                _getRichestAverageScores,
-                _reportContract,
-                _getScoreComparison,
-                _updateUserProfileLevelProgression,
-                _queueAddContract,
-                _searchForContracts2,
-                _getUserWallet,
-                _updateUserProfileSpecialRatings,
-                _uploadContract,
-                _sendTemplatedMessage,
-                _getMessages,
-                _updateContractLikeDislikes,
-                _queueRemoveContract,
-                _mergeUserTokens,
-                _executeWalletTransaction,
-                _getUserOverviewData,
-                _markContractAsPlayed,
-                _inviteToCompetition,
-                _createCompetition,
-                _getAverageScores,
-                _getDeadliestScores,
-                _updateUserInfo,
-                _getScores,
-                _getFeaturedContract,
-                _setMessageReadStatus,
-                _getRichestScores,
-                _getPopularAverageScores,
-                _updateUserProfileChallenges,
-                _updateUserProfileGameStats,
-                _putScore,
-                _getDeadliestAverageScores,
-                _getPopularScores,
-                _getNewMessageCount
-            };
-        }
-
         public static List<Type> GetEdmEntityTypes()
         {
             return new List<Type>
@@ -243,6 +225,47 @@ namespace HM5.Server.Controllers.Hitman
                 typeof(ScoreComparison),
                 typeof(ScoreEntry),
                 typeof(UserTokenData)
+            };
+        }
+
+        public static List<Type> GetEdmFunctionImports()
+        {
+            return new List<Type>
+            {
+                typeof(CreateCompetitionRequest),
+                typeof(ExecuteWalletTransactionRequest),
+                typeof(GetAverageScoresRequest),
+                typeof(GetDeadliestAverageScoresRequest),
+                typeof(GetDeadliestScoresRequest),
+                typeof(GetFeaturedContractRequest),
+                typeof(GetMessagesRequest),
+                typeof(GetNewMessageCountRequest),
+                typeof(GetPopularAverageScoresRequest),
+                typeof(GetPopularScoresRequest),
+                typeof(GetRichestAverageScoresRequest),
+                typeof(GetRichestScoresRequest),
+                typeof(GetScoreComparisonRequest),
+                typeof(GetScoresRequest),
+                typeof(GetUserOverviewDataRequest),
+                typeof(GetUserWalletRequest),
+                typeof(InviteToCompetitionRequest),
+                typeof(MarkContractAsPlayedRequest),
+                typeof(MergeUserTokensRequest),
+                typeof(PutScoreRequest),
+                typeof(QueueAddContractRequest),
+                typeof(QueueRemoveContractRequest),
+                typeof(ReportContractRequest),
+                typeof(SearchForContracts2Request),
+                typeof(SendTemplatedMessageRequest),
+                typeof(SetMessageReadStatusRequest),
+                typeof(UpdateContractLikeDislikesRequest),
+                typeof(UpdateDLCInfoRequest),
+                typeof(UpdateUserInfoRequest),
+                typeof(UpdateUserProfileChallengesRequest),
+                typeof(UpdateUserProfileGameStatsRequest),
+                typeof(UpdateUserProfileLevelProgressionRequest),
+                typeof(UpdateUserProfileSpecialRatingsRequest),
+                typeof(UploadContractRequest)
             };
         }
     }

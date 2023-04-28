@@ -1,5 +1,4 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -11,39 +10,19 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _getRichestScores = new()
+        [EdmFunctionImport(
+            "GetRichestScores",
+            HttpMethods.GET,
+            $"Collection({SchemaNamespace}.ScoreEntry)"
+        )]
+        public class GetRichestScoresRequest : BaseGetScoresRequest
         {
-            Name = "GetRichestScores",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = $"Collection({SchemaNamespace}.ScoreEntry)",
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "filter",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "startindex",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "range",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "userid",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            //Do nothing
+        }
 
         [HttpGet]
         [Route("GetRichestScores")]
-        public IActionResult GetRichestScores()
+        public IActionResult GetRichestScores([FromQuery] GetRichestScoresRequest request)
         {
             return JsonFeedResponse(_mockedGetScoresResponse);
         }

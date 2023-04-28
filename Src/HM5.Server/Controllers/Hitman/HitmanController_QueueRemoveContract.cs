@@ -1,5 +1,6 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -10,29 +11,21 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _queueRemoveContract = new()
+        [EdmFunctionImport("QueueRemoveContract", HttpMethods.GET, null)]
+        public class QueueRemoveContractRequest : IEdmFunctionImport
         {
-            Name = "QueueRemoveContract",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "userid",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "contractid",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [NormalizedString]
+            [SFunctionParameter("contractId", EdmTypes.String)]
+            public string ContractId { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("userid", EdmTypes.String)]
+            public string UserId { get; set; }
+        }
 
         [HttpGet]
         [Route("QueueRemoveContract")]
-        public IActionResult QueueRemoveContract()
+        public IActionResult QueueRemoveContract([FromQuery] QueueRemoveContractRequest request)
         {
             return Ok();
         }

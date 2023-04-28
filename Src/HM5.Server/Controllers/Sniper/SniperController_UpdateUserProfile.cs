@@ -1,5 +1,6 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Sniper
@@ -10,34 +11,24 @@ namespace HM5.Server.Controllers.Sniper
      */
     public partial class SniperController
     {
-        private static readonly EdmFunctionImport _updateUserProfile = new()
+        [EdmFunctionImport("UpdateUserProfile", HttpMethods.GET, null)]
+        public class UpdateUserProfileRequest : IEdmFunctionImport
         {
-            Name = "UpdateUserProfile",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "userid",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "country",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "friends",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [NormalizedString]
+            [SFunctionParameter("userid", EdmTypes.String)]
+            public string UserId { get; set; }
+
+            [SFunctionParameter("country", EdmTypes.Int32)]
+            public int Country { get; set; }
+
+            [SplitNormalizedString]
+            [SFunctionParameter("friends", EdmTypes.String)]
+            public List<string> Friends { get; set; }
+        }
 
         [HttpGet]
         [Route("UpdateUserProfile")]
-        public IActionResult UpdateUserProfile()
+        public IActionResult UpdateUserProfile([FromQuery] UpdateUserProfileRequest request)
         {
             return Ok();
         }

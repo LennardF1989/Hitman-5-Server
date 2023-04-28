@@ -1,5 +1,6 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -11,44 +12,30 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _putScore = new()
+        [EdmFunctionImport("PutScore", HttpMethods.GET, null)]
+        public class PutScoreRequest : IEdmFunctionImport
         {
-            Name = "PutScore",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "leaderboardtype",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "leaderboardid",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "userid",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "score",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "rating",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [SFunctionParameter("leaderboardtype", EdmTypes.Int32)]
+            public int LeaderboardType { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("leaderboardid", EdmTypes.String)]
+            public string LeaderboardId { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("userid", EdmTypes.String)]
+            public string UserId { get; set; }
+
+            [SFunctionParameter("score", EdmTypes.Int32)]
+            public int Score { get; set; }
+
+            [SFunctionParameter("rating", EdmTypes.Int32)]
+            public int Rating { get; set; }
+        }
 
         [HttpGet]
         [Route("PutScore")]
-        public IActionResult PutScore()
+        public IActionResult PutScore([FromQuery] PutScoreRequest request)
         {
             //NOTE: Appears to be the difference between your new and last (personal best) score
             return JsonOperationValueResponse(1337);

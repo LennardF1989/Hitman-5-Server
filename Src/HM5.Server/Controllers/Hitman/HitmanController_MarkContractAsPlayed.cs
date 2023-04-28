@@ -1,5 +1,6 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -10,29 +11,21 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _markContractAsPlayed = new()
+        [EdmFunctionImport("MarkContractAsPlayed", HttpMethods.GET, null)]
+        public class MarkContractAsPlayedRequest : IEdmFunctionImport
         {
-            Name = "MarkContractAsPlayed",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "userId",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "contractId",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [NormalizedString]
+            [SFunctionParameter("userId", EdmTypes.String)]
+            public string UserId { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("contractId", EdmTypes.String)]
+            public string ContractId { get; set; }
+        }
 
         [HttpGet]
         [Route("MarkContractAsPlayed")]
-        public IActionResult MarkContractAsPlayed()
+        public IActionResult MarkContractAsPlayed([FromQuery] MarkContractAsPlayedRequest request)
         {
             return Ok();
         }

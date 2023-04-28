@@ -1,5 +1,7 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using System.Text.Json;
+using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -10,31 +12,22 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _updateUserProfileGameStats = new()
+        [EdmFunctionImport("UpdateUserProfileGameStats", HttpMethods.GET, null)]
+        public class UpdateUserProfileGameStatsRequest : IEdmFunctionImport
         {
-            Name = "UpdateUserProfileGameStats",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "userid",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "data",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [NormalizedString]
+            [SFunctionParameter("userid", EdmTypes.String)]
+            public string UserId { get; set; }
+
+            [NormalizedJsonString]
+            [SFunctionParameter("data", EdmTypes.String)]
+            public Dictionary<string, JsonDocument> Data { get; set; }
+        }
 
         [HttpGet]
         [Route("UpdateUserProfileGameStats")]
-        public IActionResult UpdateUserProfileGameStats()
+        public IActionResult UpdateUserProfileGameStats([FromQuery] UpdateUserProfileGameStatsRequest request)
         {
-            //NOTE: data contains a data that needs to be parsed
             return Ok();
         }
     }

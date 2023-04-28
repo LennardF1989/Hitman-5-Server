@@ -1,5 +1,6 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -12,34 +13,24 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _reportContract = new()
+        [EdmFunctionImport("ReportContract", HttpMethods.GET, null)]
+        public class ReportContractRequest : IEdmFunctionImport
         {
-            Name = "ReportContract",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "userid",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "contractid",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "reason",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [NormalizedString]
+            [SFunctionParameter("userid", EdmTypes.String)]
+            public string UserId { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("contractId", EdmTypes.String)]
+            public string ContractId { get; set; }
+
+            [SFunctionParameter("reason", EdmTypes.Int32)]
+            public int Reason { get; set; }
+        }
 
         [HttpGet]
         [Route("ReportContract")]
-        public IActionResult ReportContract()
+        public IActionResult ReportContract([FromQuery] ReportContractRequest request)
         {
             return Ok();
         }

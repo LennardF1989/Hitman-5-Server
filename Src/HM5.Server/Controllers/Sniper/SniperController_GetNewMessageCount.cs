@@ -1,5 +1,6 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Sniper
@@ -11,24 +12,17 @@ namespace HM5.Server.Controllers.Sniper
      */
     public partial class SniperController
     {
-        private static readonly EdmFunctionImport _getNewMessageCount = new()
+        [EdmFunctionImport("GetNewMessageCount", HttpMethods.GET, null)]
+        public class GetNewMessageCountRequest : IEdmFunctionImport
         {
-            Name = "GetNewMessageCount",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "userId",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [NormalizedString]
+            [SFunctionParameter("userId", EdmTypes.String)]
+            public string UserId { get; set; }
+        }
 
         [HttpGet]
         [Route("GetNewMessageCount")]
-        public IActionResult GetNewMessageCount()
+        public IActionResult GetNewMessageCount([FromQuery] GetNewMessageCountRequest request)
         {
             //NOTE: GetNewMessageCount doesn't care for the name of the Key
             return JsonOperationValueResponse(10);

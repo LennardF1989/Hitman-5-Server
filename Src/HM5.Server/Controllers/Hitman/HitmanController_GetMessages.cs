@@ -1,6 +1,7 @@
-﻿using HM5.Server.Enums;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using HM5.Server.Models;
-using HM5.Server.Models.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -16,44 +17,34 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _getMessages = new()
+        [EdmFunctionImport(
+            "GetMessages", 
+            HttpMethods.GET, 
+            $"Collection({SchemaNamespace}.Message)"
+        )]
+        public class GetMessagesRequest : IEdmFunctionImport
         {
-            Name = "GetMessages",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = $"Collection({SchemaNamespace}.Message)",
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "userId",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "tabgroup",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "languageId",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "skip",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "limit",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [NormalizedString]
+            [SFunctionParameter("userId", EdmTypes.String)]
+            public string UserId { get; set; }
+
+            [SFunctionParameter("tabgroup", EdmTypes.Int32)]
+            public int TabGroup { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("languageId", EdmTypes.String)]
+            public string LanguageId { get; set; }
+
+            [SFunctionParameter("skip", EdmTypes.Int32)]
+            public int Skip { get; set; }
+
+            [SFunctionParameter("limit", EdmTypes.Int32)]
+            public int Limit { get; set; }
+        }
 
         [HttpGet]
         [Route("GetMessages")]
-        public IActionResult GetMessages()
+        public IActionResult GetMessages([FromQuery] GetMessagesRequest request)
         {
             return JsonFeedResponse(new List<Message>
             {

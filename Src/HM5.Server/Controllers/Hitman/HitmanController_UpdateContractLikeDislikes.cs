@@ -1,5 +1,6 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -10,39 +11,27 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _updateContractLikeDislikes = new()
+        [EdmFunctionImport("UpdateContractLikeDislikes", HttpMethods.GET, null)]
+        public class UpdateContractLikeDislikesRequest : IEdmFunctionImport
         {
-            Name = "UpdateContractLikeDislikes",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "fromUserId",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "contractId",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "likesIncrement",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "dislikesIncrement",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [NormalizedString]
+            [SFunctionParameter("fromUserId", EdmTypes.String)]
+            public string FromUserId { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("contractId", EdmTypes.String)]
+            public string ContractId { get; set; }
+
+            [SFunctionParameter("likesIncrement", EdmTypes.Int32)]
+            public int LikesIncrement { get; set; }
+
+            [SFunctionParameter("dislikesIncrement", EdmTypes.Int32)]
+            public int DislikesIncrement { get; set; }
+        }
 
         [HttpGet]
         [Route("UpdateContractLikeDislikes")]
-        public IActionResult UpdateContractLikeDislikes()
+        public IActionResult UpdateContractLikeDislikes([FromQuery] UpdateContractLikeDislikesRequest request)
         {
             return Ok();
         }

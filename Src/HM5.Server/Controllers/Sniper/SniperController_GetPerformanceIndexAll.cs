@@ -1,5 +1,6 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Sniper
@@ -11,29 +12,20 @@ namespace HM5.Server.Controllers.Sniper
      */
     public partial class SniperController
     {
-        private static readonly EdmFunctionImport _getPerformanceIndexAll = new()
+        [EdmFunctionImport("GetPerformanceIndexAll", HttpMethods.GET, null)]
+        public class GetPerformanceIndexAllRequest : IEdmFunctionImport
         {
-            Name = "GetPerformanceIndexAll",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "leaderboardid",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "userid",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [SFunctionParameter("leaderboardid", EdmTypes.Int32)]
+            public int LeaderboardId { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("userid", EdmTypes.String)]
+            public string UserId { get; set; }
+        }
 
         [HttpGet]
         [Route("GetPerformanceIndexAll")]
-        public IActionResult GetPerformanceIndexAll()
+        public IActionResult GetPerformanceIndexAll([FromQuery] GetPerformanceIndexAllRequest request)
         {
             //NOTE: Different performance percentages are at: 0, 0.55, 0.65, 0.75 and 1
             return JsonOperationListResponse(new List<float>

@@ -1,6 +1,7 @@
-﻿using HM5.Server.Enums;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using HM5.Server.Models;
-using HM5.Server.Models.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -12,34 +13,28 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _getScoreComparison = new()
+        [EdmFunctionImport(
+            "GetScoreComparison",
+            HttpMethods.GET,
+            $"{SchemaNamespace}.ScoreComparison")
+        ]
+        public class GetScoreComparisonRequest : IEdmFunctionImport
         {
-            Name = "GetScoreComparison",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = $"{SchemaNamespace}.ScoreComparison",
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "leaderboardtype",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "leaderboardid",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "userid",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [SFunctionParameter("leaderboardtype", EdmTypes.Int32)]
+            public int LeaderboardType { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("leaderboardid", EdmTypes.String)]
+            public string LeaderboardId { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("userid", EdmTypes.String)]
+            public string UserId { get; set; }
+        }
 
         [HttpGet]
         [Route("GetScoreComparison")]
-        public IActionResult GetScoreComparison()
+        public IActionResult GetScoreComparison([FromQuery] GetScoreComparisonRequest request)
         {
             return JsonEntryResponse(new ScoreComparison
             {

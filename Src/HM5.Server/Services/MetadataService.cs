@@ -13,7 +13,7 @@ namespace HM5.Server.Services
         public MetadataService(
             string schemaNamespace, 
             List<Type> edmEntityTypes, 
-            List<EdmFunctionImport> edmFunctionImports
+            List<Type> edmFunctionImports
         )
         {
             _metadata = BuildMetadata(
@@ -26,12 +26,11 @@ namespace HM5.Server.Services
         private OSMetadata BuildMetadata(
             string schemaNamespace,
             List<Type> edmEntityTypes, 
-            List<EdmFunctionImport> edmImportFunctions
+            List<Type> edmImportFunctions
         )
         {
             var entityTypes = BuildEdmEntityTypes(edmEntityTypes);
-            var importFunctions = BuildEdmImportFunctions();
-            importFunctions.AddRange(edmImportFunctions);
+            var importFunctions = BuildEdmImportFunctions(edmImportFunctions);
 
             return new OSMetadata
             {
@@ -63,26 +62,6 @@ namespace HM5.Server.Services
             };
         }
 
-        private List<EdmFunctionImport> BuildEdmImportFunctions()
-        {
-            //NOTE: Most likely unused
-            var functionNames = new List<string>
-            {
-                "DecreaseConsumables",
-                "IncreaseConsumables",
-                "consumables", //EntitySet
-                "transactions" //EntitySet
-            };
-
-            var functions = functionNames.Select(x => new EdmFunctionImport
-            {
-                Name = x,
-                HttpMethod = HttpMethods.POST
-            }).ToList();
-
-            return functions;
-        }
-
         private List<EdmEntityType> BuildEdmEntityTypes(List<Type> edmEntityTypes)
         {
             return edmEntityTypes
@@ -111,6 +90,57 @@ namespace HM5.Server.Services
                     };
                 })
                 .ToList();
+        }
+
+
+        private List<EdmFunctionImport> BuildEdmImportFunctions(List<Type> edmImportFunctions)
+        {
+            //NOTE: Most likely unused
+            var functionNames = new List<string>
+            {
+                "DecreaseConsumables",
+                "IncreaseConsumables",
+                "consumables", //EntitySet
+                "transactions" //EntitySet
+            };
+
+            var functions = functionNames.Select(x => new EdmFunctionImport
+            {
+                Name = x,
+                HttpMethod = HttpMethods.POST
+            }).ToList();
+
+            var generatedFunctions = edmImportFunctions
+                .Where(x =>
+                    typeof(IEdmFunctionImport).IsAssignableFrom(x) &&
+                    x.IsDefined(typeof(EdmFunctionImportAttribute))
+                )
+                .Select(entityType =>
+                {
+                    var functionImportAttribute = entityType.GetCustomAttribute<EdmFunctionImportAttribute>()!;
+
+                    var functionParameterAttributes = entityType.GetProperties()
+                        .Where(x => x.IsDefined(typeof(SFunctionParameterAttribute)))
+                        .Select(x => x.GetCustomAttribute<SFunctionParameterAttribute>())
+                        .ToList();
+
+                    return new EdmFunctionImport
+                    {
+                        Name = functionImportAttribute.Name,
+                        HttpMethod = functionImportAttribute.HttpMethod,
+                        ReturnType = functionImportAttribute.ReturnType,
+                        Parameters = functionParameterAttributes.Select(x => new SFunctionParameter
+                        {
+                            Name = x.Name,
+                            Type = x.Type
+                        }).ToList()
+                    };
+                })
+                .ToList();
+
+            functions.AddRange(generatedFunctions);
+
+            return functions;
         }
 
         public OSMetadata GetMetadata()

@@ -1,6 +1,7 @@
-﻿using HM5.Server.Enums;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using HM5.Server.Models;
-using HM5.Server.Models.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -12,31 +13,26 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _mergeUserTokens = new()
+        [EdmFunctionImport(
+            "MergeUserTokens", 
+            HttpMethods.GET, 
+            $"Collection({SchemaNamespace}.UserTokenData)"
+        )]
+        public class MergeUserTokensRequest : IEdmFunctionImport
         {
-            Name = "MergeUserTokens",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = $"Collection({SchemaNamespace}.UserTokenData)",
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "userId",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "tokenData",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [NormalizedString]
+            [SFunctionParameter("userId", EdmTypes.String)]
+            public string UserId { get; set; }
+
+            [NormalizedJsonString]
+            [SFunctionParameter("tokenData", EdmTypes.String)]
+            public List<UserTokenData> TokenData { get; set; }
+        }
 
         [HttpGet]
         [Route("MergeUserTokens")]
-        public IActionResult MergeUserTokens()
+        public IActionResult MergeUserTokens([FromQuery] MergeUserTokensRequest request)
         {
-            //NOTE: tokenData needs further parsing
             return JsonFeedResponse(new List<UserTokenData>());
         }
     }

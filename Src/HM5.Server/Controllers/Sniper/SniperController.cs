@@ -1,6 +1,5 @@
 ﻿using HM5.Server.Interfaces;
 using HM5.Server.Models;
-using HM5.Server.Models.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Sniper
@@ -49,27 +48,27 @@ namespace HM5.Server.Controllers.Sniper
             _metadataService = metadataService;
         }
 
-        public static List<EdmFunctionImport> GetEdmFunctionImports()
-        {
-            return new List<EdmFunctionImport>
-            {
-                _sendTemplatedMessage,
-                _setMessageReadStatus,
-                _getMessages,
-                _getNewMessageCount,
-                _updateUserProfile,
-                _putScore,
-                _getScores,
-                _getPerformanceIndexAll
-            };
-        }
-
         public static List<Type> GetEdmEntityTypes()
         {
             return new List<Type>
             {
                 typeof(SniperScoreEntry),
                 typeof(SniperMessage)
+            };
+        }
+
+        public static List<Type> GetEdmFunctionImports()
+        {
+            return new List<Type>
+            {
+                typeof(GetMessagesRequest),
+                typeof(GetNewMessageCountRequest),
+                typeof(GetPerformanceIndexAllRequest),
+                typeof(GetScoresRequest),
+                typeof(PutScoreRequest),
+                typeof(SendTemplatedMessageRequest),
+                typeof(SetMessageReadStatusRequest),
+                typeof(UpdateUserProfileRequest)
             };
         }
     }

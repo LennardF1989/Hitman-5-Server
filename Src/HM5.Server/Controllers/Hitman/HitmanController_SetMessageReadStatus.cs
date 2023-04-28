@@ -1,5 +1,6 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -10,29 +11,19 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _setMessageReadStatus = new()
+        [EdmFunctionImport("SetMessageReadStatus", HttpMethods.GET, null)]
+        public class SetMessageReadStatusRequest : IEdmFunctionImport
         {
-            Name = "SetMessageReadStatus",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "messageId",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "isRead",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [SFunctionParameter("messageId", EdmTypes.Int32)]
+            public int MessageId { get; set; }
+
+            [SFunctionParameter("isRead", EdmTypes.Boolean)]
+            public bool IsRead { get; set; }
+        }
 
         [HttpGet]
         [Route("SetMessageReadStatus")]
-        public IActionResult SetMessageReadStatus()
+        public IActionResult SetMessageReadStatus([FromQuery] SetMessageReadStatusRequest request)
         {
             //NOTE: isRead will always be set to "true"
             return Ok();

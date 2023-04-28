@@ -1,5 +1,7 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
+using HM5.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -10,99 +12,68 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _uploadContract = new()
+        [EdmFunctionImport("UploadContract", HttpMethods.GET, null)]
+        public class UploadContractRequest : IEdmFunctionImport
         {
-            Name = "UploadContract",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "levelIndex",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "checkpointIndex",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "difficulty",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "exitId",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "userId",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "title",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "description",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "score",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "startingweapontoken",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "startingoutfittoken",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "competitionParticipants",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "competitionAllowInvites",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "competitionDuration",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "targetsJson",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "restrictionsJson",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "metacategoriesJson",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [SFunctionParameter("levelIndex", EdmTypes.Int32)]
+            public int LevelIndex { get; set; }
+
+            [SFunctionParameter("checkpointIndex", EdmTypes.Int32)]
+            public int CheckpointIndex { get; set; }
+
+            [SFunctionParameter("difficulty", EdmTypes.Int32)]
+            public int Difficulty { get; set; }
+
+            [SFunctionParameter("exitId", EdmTypes.Int32)]
+            public int ExitId { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("userId", EdmTypes.String)]
+            public string UserId { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("title", EdmTypes.String)]
+            public string Title { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("description", EdmTypes.String)]
+            public string Description { get; set; }
+
+            [SFunctionParameter("score", EdmTypes.Int32)]
+            public int Score { get; set; }
+
+            [SFunctionParameter("startingweapontoken", EdmTypes.Int32)]
+            public int StartingWeaponToken { get; set; }
+
+            [SFunctionParameter("startingoutfittoken", EdmTypes.Int32)]
+            public int StartingOutfitToken { get; set; }
+
+            [SplitNormalizedString]
+            [SFunctionParameter("competitionParticipants", EdmTypes.String)]
+            public List<string> CompetitionParticipants { get; set; }
+
+            [SFunctionParameter("competitionAllowInvites", EdmTypes.Boolean)]
+            public bool CompetitionAllowInvites { get; set; }
+
+            [SFunctionParameter("competitionDuration", EdmTypes.Int32)]
+            public int CompetitionDuration { get; set; }
+
+            [NormalizedJsonString("targetsJson")]
+            [SFunctionParameter("targetsJson", EdmTypes.String)]
+            public List<Target> Targets { get; set; }
+
+            [NormalizedJsonString("restrictionsJson")]
+            [SFunctionParameter("restrictionsJson", EdmTypes.String)]
+            public List<ERestrictionType> Restrictions { get; set; }
+
+            [NormalizedJsonString("metacategoriesJson")]
+            [SFunctionParameter("metacategoriesJson", EdmTypes.String)]
+            public List<int> Metacategories { get; set; }
+        }
 
         [HttpGet]
         [Route("UploadContract")]
-        public IActionResult UploadContract()
+        public IActionResult UploadContract([FromQuery] UploadContractRequest request)
         {
             return Ok();
         }

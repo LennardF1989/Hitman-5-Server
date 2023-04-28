@@ -1,6 +1,7 @@
-﻿using HM5.Server.Enums;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using HM5.Server.Models;
-using HM5.Server.Models.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -12,24 +13,21 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _getUserOverviewData = new()
+        [EdmFunctionImport(
+            "GetUserOverviewData", 
+            HttpMethods.GET, 
+            $"{SchemaNamespace}.GetUserOverviewData"
+        )]
+        public class GetUserOverviewDataRequest : IEdmFunctionImport
         {
-            Name = "GetUserOverviewData",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = $"{SchemaNamespace}.GetUserOverviewData",
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "userid",
-                    Type = EdmTypes.String
-                }
-            }
-        };
-
+            [NormalizedString]
+            [SFunctionParameter("userid", EdmTypes.String)]
+            public string UserId { get; set; }
+        }
+        
         [HttpGet]
         [Route("GetUserOverviewData")]
-        public IActionResult GetUserOverviewData()
+        public IActionResult GetUserOverviewData([FromQuery] GetUserOverviewDataRequest request)
         {
             return JsonEntryResponse(new GetUserOverviewData
             {

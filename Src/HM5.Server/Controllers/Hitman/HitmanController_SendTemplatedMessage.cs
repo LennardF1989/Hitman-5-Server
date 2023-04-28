@@ -1,7 +1,9 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
+//TODO: ...
 namespace HM5.Server.Controllers.Hitman
 {
     /**
@@ -12,49 +14,34 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _sendTemplatedMessage = new()
+        [EdmFunctionImport("SendTemplatedMessage", HttpMethods.GET, null)]
+        public class SendTemplatedMessageRequest : IEdmFunctionImport
         {
-            Name = "SendTemplatedMessage",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new()
-                {
-                    Name = "fromId",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "toUserId",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "tabgroup",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "category",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "templateId",
-                    Type = EdmTypes.String
-                },
-                new()
-                {
-                    Name = "data",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [NormalizedString]
+            [SFunctionParameter("fromId", EdmTypes.String)]
+            public string FromId { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("toUserId", EdmTypes.String)]
+            public string ToUserId { get; set; }
+
+            [SFunctionParameter("tabgroup", EdmTypes.Int32)]
+            public int TabGroup { get; set; }
+
+            [SFunctionParameter("category", EdmTypes.Int32)]
+            public int Category { get; set; }
+
+            [SFunctionParameter("templateId", EdmTypes.Int32)]
+            public int TemplateId { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("data", EdmTypes.String)]
+            public string Data { get; set; }
+        }
 
         [HttpGet]
         [Route("SendTemplatedMessage")]
-        public IActionResult SendTemplatedMessage()
+        public IActionResult SendTemplatedMessage([FromQuery] SendTemplatedMessageRequest request)
         {
             //NOTE: toUserId will be "----Friends----" if it's called from SendMessageToUsersFriends
             //NOTE: tabgroup will be "1" if it's called from SendMessageToSelf

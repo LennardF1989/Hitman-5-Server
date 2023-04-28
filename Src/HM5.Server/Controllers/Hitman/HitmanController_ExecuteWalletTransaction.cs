@@ -1,5 +1,6 @@
-﻿using HM5.Server.Enums;
-using HM5.Server.Models.Base;
+﻿using HM5.Server.Attributes;
+using HM5.Server.Enums;
+using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -11,44 +12,29 @@ namespace HM5.Server.Controllers.Hitman
      */
     public partial class HitmanController
     {
-        private static readonly EdmFunctionImport _executeWalletTransaction = new()
+        [EdmFunctionImport("ExecuteWalletTransaction", HttpMethods.GET, null)]
+        public class ExecuteWalletTransactionRequest : IEdmFunctionImport
         {
-            Name = "ExecuteWalletTransaction",
-            HttpMethod = HttpMethods.GET,
-            ReturnType = null,
-            Parameters = new List<SFunctionParameter>
-            {
-                new ()
-                {
-                    Name = "amount",
-                    Type = EdmTypes.String
-                },
-                new ()
-                {
-                    Name = "userId",
-                    Type = EdmTypes.String
-                },
-                new ()
-                {
-                    Name = "tokenId",
-                    Type = EdmTypes.String
-                },
-                new ()
-                {
-                    Name = "subId",
-                    Type = EdmTypes.String
-                },
-                new ()
-                {
-                    Name = "level",
-                    Type = EdmTypes.String
-                }
-            }
-        };
+            [SFunctionParameter("amount", EdmTypes.Int32)]
+            public int Amount { get; set; }
+
+            [NormalizedString]
+            [SFunctionParameter("userId", EdmTypes.String)]
+            public string UserId { get; set; }
+
+            [SFunctionParameter("tokenId", EdmTypes.Int32)]
+            public int TokenId { get; set; }
+
+            [SFunctionParameter("subId", EdmTypes.Int32)]
+            public int SubId { get; set; }
+
+            [SFunctionParameter("level", EdmTypes.Int32)]
+            public int Level { get; set; }
+        }
 
         [HttpGet]
         [Route("ExecuteWalletTransaction")]
-        public IActionResult ExecuteWalletTransaction()
+        public IActionResult ExecuteWalletTransaction([FromQuery] ExecuteWalletTransactionRequest request)
         {
             //NOTE: Appears to be the new WalletAmount left
             return JsonOperationValueResponse(101);

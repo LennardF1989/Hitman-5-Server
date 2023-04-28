@@ -1,4 +1,3 @@
-using System.Text.Json;
 using HM5.Server.Attributes;
 using HM5.Server.Enums;
 using HM5.Server.Interfaces;
@@ -32,6 +31,29 @@ namespace HM5.Test
             //Do nothing
         }
 
+        [EdmFunctionImport("FunctionImportTest", HttpMethods.GET, "Test.EntityTest")]
+        public class TestFunctionImportValid : IEdmFunctionImport
+        {
+            [SFunctionParameter("_stringValue", EdmTypes.String)]
+            public string StringValue { get; set; }
+        }
+
+        public class TestFunctionImportInvalid1
+        {
+            //Do nothing
+        }
+
+        [EdmFunctionImport("FunctionImportTest", HttpMethods.GET, "Test.EntityTest")]
+        public class TestFunctionImportInvalid2
+        {
+            //Do nothing
+        }
+
+        public class TestFunctionImportInvalid3 : IEdmFunctionImport
+        {
+            //Do nothing
+        }
+
         [Fact]
         public void SingleSchema_HasNamespace()
         {
@@ -40,7 +62,7 @@ namespace HM5.Test
             var metadataService = new MetadataService(
                 expectedNamespace, 
                 new List<Type>(), 
-                new List<EdmFunctionImport>()
+                new List<Type>()
             );
 
             var metadata = metadataService.GetMetadata();
@@ -58,14 +80,14 @@ namespace HM5.Test
                 {
                     typeof(TestEntityValid)
                 },
-                new List<EdmFunctionImport>()
+                new List<Type>()
             );
 
             var metadata = metadataService.GetMetadata();
             var schema = metadata.Schemas.Single();
             var entityType = schema.EntityTypes.Single();
 
-            var entityExpected = JsonSerializer.Serialize(new EdmEntityType
+            var entityExpected = new EdmEntityType
             {
                 Name = "EntityTest",
                 Properties = new List<EdmProperty>
@@ -77,11 +99,9 @@ namespace HM5.Test
                         Nullable = true
                     }
                 }
-            });
+            };
 
-            var entityActual = JsonSerializer.Serialize(entityType);
-
-            Assert.Equal(entityExpected, entityActual);
+            Assert.Equivalent(entityExpected, entityType);
         }
 
         [Fact]
@@ -95,7 +115,7 @@ namespace HM5.Test
                     typeof(TestEntityInvalid2),
                     typeof(TestEntityInvalid3)
                 },
-                new List<EdmFunctionImport>()
+                new List<Type>()
             );
 
             var metadata = metadataService.GetMetadata();
@@ -105,29 +125,51 @@ namespace HM5.Test
         }
 
         [Fact]
-        public void SingleSchema_HasSingleEntityContainer_ContainsFunctionImport()
+        public void SingleSchema_HasSingleFunctionImport()
         {
-            var functionImport = new EdmFunctionImport
+            var metadataService = new MetadataService(
+                "Test",
+                new List<Type>(),
+                new List<Type>
+                {
+                    typeof(TestFunctionImportValid)
+                }
+            );
+
+            var metadata = metadataService.GetMetadata();
+            var schema = metadata.Schemas.Single();
+            var entityContainer = schema.EntityContainers.Single();
+            var functionImport = entityContainer.FunctionImports.Last();
+
+            var functionImportExpected = new EdmFunctionImport
             {
+                Name = "FunctionImportTest",
                 HttpMethod = HttpMethods.GET,
-                Name = "Test",
-                ReturnType = "Test",
+                ReturnType = "Test.EntityTest",
                 Parameters = new List<SFunctionParameter>
                 {
                     new()
                     {
-                        Name = "Test",
-                        Type = "Test"
+                        Name = "_stringValue",
+                        Type = EdmTypes.String
                     }
                 }
             };
+            
+            Assert.Equivalent(functionImportExpected, functionImport);
+        }
 
+        [Fact]
+        public void SingleSchema_DoesNotContain_FunctionImportWithoutAttributeAndOrInterface()
+        {
             var metadataService = new MetadataService(
                 "Test",
                 new List<Type>(),
-                new List<EdmFunctionImport>
+                new List<Type>
                 {
-                    functionImport
+                    typeof(TestFunctionImportInvalid1),
+                    typeof(TestFunctionImportInvalid2),
+                    typeof(TestFunctionImportInvalid3)
                 }
             );
 
@@ -135,7 +177,8 @@ namespace HM5.Test
             var schema = metadata.Schemas.Single();
             var entityContainer = schema.EntityContainers.Single();
 
-            Assert.Contains(functionImport, entityContainer.FunctionImports);
+            //NOTE: Skip the four default functions
+            Assert.Empty(entityContainer.FunctionImports.Skip(4));
         }
     }
 }
