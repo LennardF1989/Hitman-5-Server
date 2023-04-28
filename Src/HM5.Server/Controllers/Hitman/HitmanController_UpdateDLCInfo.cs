@@ -3,7 +3,6 @@ using HM5.Server.Enums;
 using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-//TODO: ...
 namespace HM5.Server.Controllers.Hitman
 {
     /**
@@ -15,9 +14,9 @@ namespace HM5.Server.Controllers.Hitman
         [EdmFunctionImport("UpdateDLCInfo", HttpMethods.GET, null)]
         public class UpdateDLCInfoRequest : IEdmFunctionImport
         {
-            [NormalizedString]
+            [SplitNormalizedString]
             [SFunctionParameter("dlctokens", EdmTypes.String)]
-            public string DLCTokens { get; set; }
+            public List<string> DLCTokens { get; set; }
 
             [NormalizedString]
             [SFunctionParameter("userid", EdmTypes.String)]
