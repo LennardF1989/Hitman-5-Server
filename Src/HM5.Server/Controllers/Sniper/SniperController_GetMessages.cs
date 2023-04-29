@@ -46,27 +46,26 @@ namespace HM5.Server.Controllers.Sniper
         [Route("GetMessages")]
         public IActionResult GetMessages([FromQuery] GetMessagesRequest request)
         {
-            return JsonFeedResponse(new List<SniperMessage>
-            {
-                new()
+            var templateData = "Diana, she..." +
+                              "|||" +
+                              "Always talks about him.<BR><BR>Way back when they first worked together.";
+
+            var messages = Enum
+                .GetValues<EMessageCategory>()
+                .Skip(request.Skip)
+                .Take(request.Limit)
+                .Select((x, i) => new SniperMessage
                 {
-                    Id = 5000,
-                    FromId = "76561198161220058",
-                    Category = 1,
+                    Id = 5000 + i,
+                    Category = x,
+                    FromId = "LennardF1989",
                     TextTemplateId = 0,
-                    TemplateData = "Heya!",
+                    TemplateData = templateData,
                     TimestampUTC = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
-                },
-                new()
-                {
-                    Id = 5001,
-                    FromId = "76561198161220058",
-                    Category = 1,
-                    TextTemplateId = 0,
-                    TemplateData = "Heya {userid}!",
-                    TimestampUTC = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
-                }
-            });
+                })
+                .ToList();
+
+            return JsonFeedResponse(messages);
         }
     }
 }

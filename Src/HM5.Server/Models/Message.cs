@@ -16,6 +16,9 @@ namespace HM5.Server.Models
         [EdmProperty("FromId", EdmTypes.String, false)]
         public string FromId { get; set; }
 
+        [EdmProperty("Category", EdmTypes.Int32, false)]
+        public EMessageCategory Category { get; set; }
+
         [EdmProperty("TimestampUTC", EdmTypes.Int64, false)]
         public long TimestampUTC { get; set; }
 
@@ -23,7 +26,7 @@ namespace HM5.Server.Models
         public bool IsRead { get; set; }
 
         [EdmProperty("TextTemplateId", EdmTypes.Int32, false)]
-        public int TextTemplateId { get; set; }
+        public EMessageTextTemplate TextTemplateId { get; set; }
 
         [EdmProperty("TemplateData", EdmTypes.String, false)]
         public string TemplateData { get; set; }

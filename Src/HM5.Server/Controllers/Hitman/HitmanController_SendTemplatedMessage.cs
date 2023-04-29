@@ -3,7 +3,6 @@ using HM5.Server.Enums;
 using HM5.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-//TODO: ...
 namespace HM5.Server.Controllers.Hitman
 {
     /**

@@ -17,7 +17,7 @@ namespace HM5.Server.Models
         public string FromId { get; set; }
 
         [EdmProperty("Category", EdmTypes.Int32, false)]
-        public int Category { get; set; }
+        public EMessageCategory Category { get; set; }
 
         [EdmProperty("TimestampUTC", EdmTypes.Int64, false)]
         public long TimestampUTC { get; set; }

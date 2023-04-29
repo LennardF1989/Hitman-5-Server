@@ -18,8 +18,8 @@ namespace HM5.Server.Controllers.Hitman
     public partial class HitmanController
     {
         [EdmFunctionImport(
-            "GetMessages", 
-            HttpMethods.GET, 
+            "GetMessages",
+            HttpMethods.GET,
             $"Collection({SchemaNamespace}.Message)"
         )]
         public class GetMessagesRequest : IEdmFunctionImport
@@ -46,27 +46,67 @@ namespace HM5.Server.Controllers.Hitman
         [Route("GetMessages")]
         public IActionResult GetMessages([FromQuery] GetMessagesRequest request)
         {
-            return JsonFeedResponse(new List<Message>
+            var templateDataKeyValues = new Dictionary<string, string>
             {
-                new()
+                ["{ContractId}"] = _mockedContractWithoutCompetition.Id.ToString(),
+                ["{ContractName}"] = _mockedContractWithoutCompetition.DisplayId,
+                ["{userid}"] = "userid: LennardF1989",
+                ["{CompetitionCreatorName}"] = "CompetitionCreatorName: LennardF1989",
+                ["{WinnerName}"] = "WinnerName: LennardF1989",
+                ["{WinnerScore}"] = "WinnerScore: 101",
+                ["{PlayerScore}"] = "PlayerScore: 101",
+                ["{NumberOfParticipants}"] = "NumberOfParticipants: 47",
+                ["{TrophiesEarned}"] = "TrophiesEarned: 47"
+            };
+
+            var templateData = string.Join(
+                "|||",
+                templateDataKeyValues.Select(x => $"{x.Key}|||{x.Value}")
+            );
+
+            var messages = Enum
+                .GetNames<EMessageTextTemplate>()
+                .OrderBy(x => x)
+                .Skip(request.Skip)
+                .Take(request.Limit)
+                .Select(x => (EMessageTextTemplate)Enum.Parse(typeof(EMessageTextTemplate), x))
+                .Select((textTemplateId, i) =>
                 {
-                    Id = 5000,
-                    FromId = "76561198161220058",
-                    IsRead = false,
-                    TextTemplateId = 0,
-                    TemplateData = "Heya!",
-                    TimestampUTC = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
-                },
-                new()
-                {
-                    Id = 5001,
-                    FromId = "76561198161220058",
-                    IsRead = true,
-                    TextTemplateId = 0,
-                    TemplateData = "Heya {userid}!",
-                    TimestampUTC = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
-                }
-            });
+                    var actualTemplateData = textTemplateId switch
+                    {
+                        EMessageTextTemplate.None =>
+                            "Diana, she..." +
+                            "|||" +
+                            "Always talks about him.<BR><BR>Way back when they first worked together.",
+                        EMessageTextTemplate.Silverballer => MasterCraftedSilverballer(
+                            "Kill Diana with a Silverballer", 
+                            "Or maybe don't?",
+                            _mockedContractWithoutCompetition.Id
+                        ),
+                        _ => templateData
+                    };
+
+                    return new Message
+                    {
+                        Id = 5000 + i,
+                        FromId = "LennardF1989",
+                        IsRead = true,
+                        Category = EMessageCategory.Medal,
+                        TextTemplateId = textTemplateId,
+                        TemplateData = actualTemplateData,
+                        TimestampUTC = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                    };
+                })
+                .ToList();
+
+            return JsonFeedResponse(messages);
+        }
+
+        private string MasterCraftedSilverballer(string title, string body, int? contractId = null)
+        {
+            return contractId == null 
+                ? $"Silverballer|||{title}||{{baller}}|||{{baller}}||||{body}" 
+                : $"{{ContractId}}|||{contractId}|||Silverballer|||{title}||{{baller}}|||{{baller}}||||{body}";
         }
     }
 }
