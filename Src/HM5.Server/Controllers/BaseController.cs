@@ -22,7 +22,7 @@ namespace HM5.Server.Controllers
         }
 
         /**
-         * NOTE: Even though it is not constrained, only use primitive values for the generic!
+         * NOTE: Even though it is not constrained, only use primitive types for the generic!
          */
         protected JsonResult JsonOperationValueResponse<T>(T data)
         {
@@ -36,7 +36,7 @@ namespace HM5.Server.Controllers
         }
 
         /**
-         * NOTE: Even though it is not constrained, only use primitive values for the generic!
+         * NOTE: Even though it is not constrained, only use primitive types for the generic!
          */
         protected JsonResult JsonOperationListResponse<T>(List<T> data)
         {

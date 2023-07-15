@@ -35,7 +35,7 @@ namespace HM5.Server.Controllers.Hitman
         public const string SchemaNamespace = "HM5";
 
         //NOTE: Rating seems unused in UI?
-        private readonly List<ScoreEntry> _mockedGetScoresResponse = new()
+        private static readonly List<ScoreEntry> _mockedGetScoresResponse = new()
         {
             new ScoreEntry
             {
@@ -76,7 +76,7 @@ namespace HM5.Server.Controllers.Hitman
             }
         };
 
-        private readonly List<int> _mockedGetAverageScoresResponse = new()
+        private static readonly List<int> _mockedGetAverageScoresResponse = new()
         {
             1, //World Average
             2, //Country Average
@@ -84,7 +84,7 @@ namespace HM5.Server.Controllers.Hitman
             4 //Score: Deadliest / Richest / Most Popular Assassin
         };
 
-        private readonly Contract _mockedContractWithoutCompetition = new()
+        private static readonly Contract _mockedContractWithoutCompetition = new()
         {
             Id = 1,
             DisplayId = "FakeContract47",
@@ -136,7 +136,7 @@ namespace HM5.Server.Controllers.Hitman
             UserScore = 241953
         };
 
-        private readonly Contract _mockedContractWithCompetition = new()
+        private static readonly Contract _mockedContractWithCompetition = new()
         {
             Id = 2,
             DisplayId = "FakeContract48",
@@ -208,11 +208,21 @@ namespace HM5.Server.Controllers.Hitman
 
         public HitmanController(
             ISimpleLogger simpleLogger,
-            IMetadataServiceForHitman metadataService
+            IMetadataServiceForHitman metadataService,
+            Options options
         )
             : base(simpleLogger)
         {
             _metadataService = metadataService;
+
+            //Apply options to the mocked contracts
+            _mockedContractWithoutCompetition.UserId = options.MockedContractSteamId;
+            _mockedContractWithoutCompetition.HighestScoringFriendName = options.MockedContractSteamId;
+
+            _mockedContractWithCompetition.UserId = options.MockedContractSteamId;
+            _mockedContractWithCompetition.CompetitionLeader = options.MockedContractSteamId;
+            _mockedContractWithCompetition.HighestScoringFriendName = options.MockedContractSteamId;
+            _mockedContractWithCompetition.Competition.Competition[0].CompetitionCreator = options.MockedContractSteamId;
         }
 
         public static List<Type> GetEdmEntityTypes()
