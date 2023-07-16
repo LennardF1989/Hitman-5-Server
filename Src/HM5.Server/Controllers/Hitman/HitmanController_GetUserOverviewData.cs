@@ -42,7 +42,7 @@ namespace HM5.Server.Controllers.Hitman
                 RichestAverage = 1337,
                 RichestRank = 1337,
                 TrophiesEarned = 1337,
-                WalletAmount = 1337
+                WalletAmount = 1999999
             });
         }
     }
