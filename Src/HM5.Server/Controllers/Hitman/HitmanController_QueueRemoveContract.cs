@@ -15,7 +15,7 @@ namespace HM5.Server.Controllers.Hitman
         public class QueueRemoveContractRequest : IEdmFunctionImport
         {
             [NormalizedString]
-            [SFunctionParameter("contractId", EdmTypes.String)]
+            [SFunctionParameter("contractid", EdmTypes.String)]
             public string ContractId { get; set; }
 
             [NormalizedString]
