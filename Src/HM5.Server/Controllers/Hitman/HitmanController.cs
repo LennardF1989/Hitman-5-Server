@@ -205,6 +205,7 @@ namespace HM5.Server.Controllers.Hitman
         };
 
         private readonly IMetadataService _metadataService;
+        private readonly Options _options;
 
         public HitmanController(
             ISimpleLogger simpleLogger,
@@ -214,6 +215,7 @@ namespace HM5.Server.Controllers.Hitman
             : base(simpleLogger)
         {
             _metadataService = metadataService;
+            _options = options;
 
             //Apply options to the mocked contracts
             _mockedContractWithoutCompetition.UserId = options.MockedContractSteamId;

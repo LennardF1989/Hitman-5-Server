@@ -7,5 +7,6 @@
         public bool EnableRequestBodyLogging { get; set; } = false;
         public bool EnableResponseBodyLogging { get; set; } = false;
         public string MockedContractSteamId { get; set; } = "76561198161220058";
+        public int WalletAmount { get; set; } = 1337;
     }
 }
