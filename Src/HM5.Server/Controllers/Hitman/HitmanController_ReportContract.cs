@@ -21,7 +21,7 @@ namespace HM5.Server.Controllers.Hitman
             public string UserId { get; set; }
 
             [NormalizedString]
-            [SFunctionParameter("contractId", EdmTypes.String)]
+            [SFunctionParameter("contractid", EdmTypes.String)]
             public string ContractId { get; set; }
 
             [SFunctionParameter("reason", EdmTypes.Int32)]
