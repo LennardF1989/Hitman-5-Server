@@ -24,7 +24,7 @@ namespace HM5.Server.Controllers.Hitman
         [Route("GetPopularScores")]
         public IActionResult GetPopularScores([FromQuery] GetPopularScoresRequest request)
         {
-            return JsonFeedResponse(_mockedGetScoresResponse);
+            return JsonFeedResponse(_hitmanServer.GetScores(request));
         }
     }
 }

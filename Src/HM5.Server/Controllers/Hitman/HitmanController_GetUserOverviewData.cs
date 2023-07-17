@@ -1,7 +1,6 @@
 ﻿using HM5.Server.Attributes;
 using HM5.Server.Enums;
 using HM5.Server.Interfaces;
-using HM5.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -29,21 +28,7 @@ namespace HM5.Server.Controllers.Hitman
         [Route("GetUserOverviewData")]
         public IActionResult GetUserOverviewData([FromQuery] GetUserOverviewDataRequest request)
         {
-            return JsonEntryResponse(new GetUserOverviewData
-            {
-                ContractPlays = 1337,
-                CompetitionPlays = 1337,
-                ContractsCreated = 1337,
-                ContractsCreatedLikes = 1337,
-                DeadliestAverage = 1337,
-                DeadliestRank = 1337,
-                PopularAverage = 1337,
-                PopularRank = 1337,
-                RichestAverage = 1337,
-                RichestRank = 1337,
-                TrophiesEarned = 1337,
-                WalletAmount = _options.WalletAmount
-            });
+            return JsonEntryResponse(_hitmanServer.GetUserOverviewData(request));
         }
     }
 }

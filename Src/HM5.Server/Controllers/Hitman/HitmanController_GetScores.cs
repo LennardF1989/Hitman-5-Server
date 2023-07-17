@@ -30,7 +30,7 @@ namespace HM5.Server.Controllers.Hitman
         [Route("GetScores")]
         public IActionResult GetScores([FromQuery] GetScoresRequest request)
         {
-            return JsonFeedResponse(_mockedGetScoresResponse);
+            return JsonFeedResponse(_hitmanServer.GetScores(request));
         }
     }
 }

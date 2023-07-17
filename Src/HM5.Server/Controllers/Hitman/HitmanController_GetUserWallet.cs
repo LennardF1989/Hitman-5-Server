@@ -28,7 +28,7 @@ namespace HM5.Server.Controllers.Hitman
         [Route("GetUserWallet")]
         public IActionResult GetUserWallet([FromQuery] GetUserWalletRequest request)
         {
-            return JsonOperationValueResponse(_options.WalletAmount);
+            return JsonOperationValueResponse(_hitmanServer.GetUserWallet(request));
         }
     }
 }

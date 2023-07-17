@@ -27,6 +27,8 @@ namespace HM5.Server.Controllers.Hitman
         [Route("QueueAddContract")]
         public IActionResult QueueAddContract([FromQuery] QueueAddContractRequest request)
         {
+            _hitmanServer.QueueAddContract(request);
+
             return Ok();
         }
     }

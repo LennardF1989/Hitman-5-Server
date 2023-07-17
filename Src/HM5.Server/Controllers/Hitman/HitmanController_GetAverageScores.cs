@@ -30,7 +30,7 @@ namespace HM5.Server.Controllers.Hitman
         [Route("GetAverageScores")]
         public IActionResult GetAverageScores([FromQuery] GetAverageScoresRequest request)
         {
-            return JsonOperationListResponse(_mockedGetAverageScoresResponse);
+            return JsonOperationListResponse(_hitmanServer.GetAverageScores(request));
         }
     }
 }

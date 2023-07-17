@@ -24,7 +24,7 @@ namespace HM5.Server.Controllers.Hitman
         [Route("GetNewMessageCount")]
         public IActionResult GetNewMessageCount([FromQuery] GetNewMessageCountRequest request)
         {
-            return JsonOperationValueResponse(10);
+            return JsonOperationValueResponse(_hitmanServer.GetNewMessageCount(request));
         }
     }
 }

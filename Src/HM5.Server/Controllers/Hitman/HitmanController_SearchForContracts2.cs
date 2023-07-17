@@ -1,7 +1,6 @@
 ﻿using HM5.Server.Attributes;
 using HM5.Server.Enums;
 using HM5.Server.Interfaces;
-using HM5.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -57,18 +56,7 @@ namespace HM5.Server.Controllers.Hitman
         [Route("SearchForContracts2")]
         public IActionResult SearchForContracts2([FromQuery] SearchForContracts2Request request)
         {
-            if (_options.UseCustomContracts)
-            {
-                var contracts = _contractsService.GetContracts(request);
-
-                return JsonFeedResponse(contracts.ToList());
-            }
-
-            return JsonFeedResponse(new List<Contract>
-            {
-                _mockedContractWithoutCompetition,
-                _mockedContractWithCompetition
-            });
+            return JsonFeedResponse(_hitmanServer.SearchForContracts2(request));
         }
     }
 }

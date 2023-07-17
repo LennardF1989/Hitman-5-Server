@@ -38,7 +38,7 @@ namespace HM5.Server.Controllers.Hitman
         public IActionResult PutScore([FromQuery] PutScoreRequest request)
         {
             //NOTE: Appears to be the difference between your new and last (personal best) score
-            return JsonOperationValueResponse(1337);
+            return JsonOperationValueResponse(_hitmanServer.PutScore(request));
         }
     }
 }

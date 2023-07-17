@@ -24,7 +24,7 @@ namespace HM5.Server.Controllers.Hitman
         [Route("GetDeadliestScores")]
         public IActionResult GetDeadliestScores([FromQuery] GetDeadliestScoresRequest request)
         {
-            return JsonFeedResponse(_mockedGetScoresResponse);
+            return JsonFeedResponse(_hitmanServer.GetScores(request));
         }
     }
 }

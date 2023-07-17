@@ -35,6 +35,8 @@ namespace HM5.Server.Controllers.Hitman
         [Route("UpdateUserInfo")]
         public IActionResult UpdateUserInfo([FromQuery] UpdateUserInfoRequest request)
         {
+            _hitmanServer.UpdateUserInfo(request);
+
             return Ok();
         }
     }

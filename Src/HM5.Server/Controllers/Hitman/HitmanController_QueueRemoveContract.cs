@@ -27,6 +27,8 @@ namespace HM5.Server.Controllers.Hitman
         [Route("QueueRemoveContract")]
         public IActionResult QueueRemoveContract([FromQuery] QueueRemoveContractRequest request)
         {
+            _hitmanServer.QueueRemoveContract(request);
+
             return Ok();
         }
     }

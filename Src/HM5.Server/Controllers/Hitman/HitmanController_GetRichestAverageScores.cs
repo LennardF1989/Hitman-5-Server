@@ -25,7 +25,7 @@ namespace HM5.Server.Controllers.Hitman
         [Route("GetRichestAverageScores")]
         public IActionResult GetRichestAverageScores([FromQuery] GetRichestAverageScoresRequest request)
         {
-            return JsonOperationListResponse(_mockedGetAverageScoresResponse);
+            return JsonOperationListResponse(_hitmanServer.GetAverageScores(request));
         }
     }
 }

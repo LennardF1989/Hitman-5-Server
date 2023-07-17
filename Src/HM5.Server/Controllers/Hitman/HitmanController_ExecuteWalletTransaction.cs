@@ -37,7 +37,7 @@ namespace HM5.Server.Controllers.Hitman
         public IActionResult ExecuteWalletTransaction([FromQuery] ExecuteWalletTransactionRequest request)
         {
             //NOTE: Appears to be the new WalletAmount left
-            return JsonOperationValueResponse(101);
+            return JsonOperationValueResponse(_hitmanServer.ExecuteWalletTransaction(request));
         }
     }
 }

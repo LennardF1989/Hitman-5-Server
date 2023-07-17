@@ -70,17 +70,20 @@ namespace HM5.Server
             services.AddTransient<FixAddMetricsContentTypeMiddleware>();
             services.AddTransient<RequestResponseLoggerMiddleware>();
 
-            services.AddSingleton<IContractsService, ContractsService>();
-        }
-
-        public void Configure(IApplicationBuilder app, Options options, IContractsService contractsService)
-        {
             if (options.UseCustomContracts)
             {
-                Directory.CreateDirectory("Contracts");
-
-                contractsService.RebuildCache();
+                services.AddSingleton<IContractsService, ContractsService>();
+                services.AddSingleton<IHitmanServer, LocalHitmanServer>();
             }
+            else
+            {
+                services.AddSingleton<IHitmanServer, MockedHitmanServer>();
+            }
+        }
+
+        public void Configure(IApplicationBuilder app, Options options, IHitmanServer hitmanServer)
+        {
+            hitmanServer.Initialize();
 
             if (options.FixAddMetricsContentType)
             {

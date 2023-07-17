@@ -31,7 +31,7 @@ namespace HM5.Server.Controllers.Hitman
         [Route("GetFeaturedContract")]
         public IActionResult GetFeaturedContract([FromQuery] GetFeaturedContractRequest request)
         {
-            return JsonEntryResponse(_mockedContractWithCompetition);
+            return JsonEntryResponse(_hitmanServer.GetFeaturedContract(request));
         }
     }
 }

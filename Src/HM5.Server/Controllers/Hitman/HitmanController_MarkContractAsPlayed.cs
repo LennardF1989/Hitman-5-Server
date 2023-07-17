@@ -27,6 +27,8 @@ namespace HM5.Server.Controllers.Hitman
         [Route("MarkContractAsPlayed")]
         public IActionResult MarkContractAsPlayed([FromQuery] MarkContractAsPlayedRequest request)
         {
+            _hitmanServer.MarkContractAsPlayed(request);
+
             return Ok();
         }
     }
