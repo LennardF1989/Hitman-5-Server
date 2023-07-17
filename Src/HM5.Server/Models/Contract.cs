@@ -9,10 +9,9 @@ namespace HM5.Server.Models
     [EdmEntity("Contract")]
     public class Contract : IEdmEntity
     {
-        //NOTE: Even though this is treated as a String in-game, we always assign an Integer.
         [JsonPropertyName("_id")]
         [EdmProperty("_id", EdmTypes.String, false)]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [EdmProperty("DisplayId", EdmTypes.String, false)]
         public string DisplayId { get; set; }

@@ -102,7 +102,7 @@ namespace HM5.Server.Controllers.Hitman
             return JsonFeedResponse(messages);
         }
 
-        private string MasterCraftedSilverballer(string title, string body, int? contractId = null)
+        private string MasterCraftedSilverballer(string title, string body, string contractId = null)
         {
             return contractId == null 
                 ? $"Silverballer|||{title}||{{baller}}|||{{baller}}||||{body}" 

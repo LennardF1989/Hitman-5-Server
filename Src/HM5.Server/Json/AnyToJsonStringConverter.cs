@@ -7,7 +7,7 @@ namespace HM5.Server.Json
     {
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            return JsonSerializer.Deserialize<T>(reader.GetString());
         }
 
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)

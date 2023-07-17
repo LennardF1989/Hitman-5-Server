@@ -5,6 +5,7 @@ obj
 *.user
 
 # Server
+/Src/HM5.Server/Contracts
 /Src/HM5.Server/Logs
 
 # Other

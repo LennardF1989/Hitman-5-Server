@@ -86,7 +86,7 @@ namespace HM5.Server.Controllers.Hitman
 
         private static readonly Contract _mockedContractWithoutCompetition = new()
         {
-            Id = 1,
+            Id = "1",
             DisplayId = "FakeContract47",
             UserId = "76561198161220058",
             UserName = "Wingz of Death",
@@ -138,7 +138,7 @@ namespace HM5.Server.Controllers.Hitman
 
         private static readonly Contract _mockedContractWithCompetition = new()
         {
-            Id = 2,
+            Id = "2",
             DisplayId = "FakeContract48",
             UserId = "76561198161220058",
             UserName = "Wingz of Death",
@@ -206,16 +206,19 @@ namespace HM5.Server.Controllers.Hitman
 
         private readonly IMetadataService _metadataService;
         private readonly Options _options;
+        private readonly IContractsService _contractsService;
 
         public HitmanController(
             ISimpleLogger simpleLogger,
             IMetadataServiceForHitman metadataService,
-            Options options
+            Options options,
+            IContractsService contractsService
         )
             : base(simpleLogger)
         {
             _metadataService = metadataService;
             _options = options;
+            _contractsService = contractsService;
 
             //Apply options to the mocked contracts
             _mockedContractWithoutCompetition.UserId = options.MockedContractSteamId;

@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Logs\" />
+    <Content Remove="Contracts\**" />
+    <None Remove="Logs\**" />
   </ItemGroup>
 
 </Project>

@@ -75,6 +75,11 @@ namespace HM5.Server.Controllers.Hitman
         [Route("UploadContract")]
         public IActionResult UploadContract([FromQuery] UploadContractRequest request)
         {
+            if (_options.UseCustomContracts)
+            {
+                _contractsService.CreateContract(request);
+            }
+
             return Ok();
         }
     }

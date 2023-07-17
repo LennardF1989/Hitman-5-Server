@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Hitman Absolution</title>
+
+    <style>
+        /*.share-text {
+            display: none;
+        }*/
+        
+        #contracts td {
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+    <template id="contract">
+        <tbody class="contract">
+            <tr>
+                <td class="id"></td>
+                <td class="title"></td>
+                <td class="description"></td>
+                <td class="targets"></td>
+                <td class="level"></td>
+                <td class="difficulty"></td>
+                <td class="score"></td>
+                <td class="actions">
+                    <a href="#" class="share">Share</a>
+                    <a href="#" class="delete">Delete</a>
+                </td>
+            </tr>
+            <tr style="display: none">
+                <td colspan="8" class="share-text"></td>
+            </tr>
+        </tbody>
+    </template>
+
+    <h1>Hitman Absolution - Contracts</h1>
+
+    <table id="contracts" border="1">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Targets</th>
+                <th>Level</th>
+                <th>Difficulty</th>
+                <th>Score</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+    </table>
+
+<script>
+        async function main() {
+            const contractsResponse = await fetch("/contracts/all");
+            const contractsJson = await contractsResponse.json();
+
+            const contractsElement = document.querySelector("#contracts");
+
+            const template = document.querySelector("#contract");
+
+            for (const contract of contractsJson) {
+                const element = template.content.cloneNode(true).children[0];
+
+                const idElement = element.querySelector(".id");
+                idElement.innerText = contract.Id;
+
+                const titleElement = element.querySelector(".title");
+                titleElement.innerText = contract.Name;
+
+                const descriptionElement = element.querySelector(".description");
+                descriptionElement.innerText = contract.Description;
+
+                const targetsElement = element.querySelector(".targets");
+                targetsElement.innerText = contract.Targets.join(", ");
+
+                const levelElement = element.querySelector(".level");
+                levelElement.innerText = contract.Level;
+                
+                const difficultyElement = element.querySelector(".difficulty");
+                difficultyElement.innerText = contract.Difficulty;
+
+                const scoreElement = element.querySelector(".score");
+                scoreElement.innerText = contract.Score;
+
+                const shareElement = element.querySelector(".share");
+                const shareTextElement = element.querySelector(".share-text");
+                shareElement.addEventListener("click", async function (e) {
+                    const shareLinkResponse = await fetch(`/contracts/share/${contract.Id}`);
+                    const shareLinkResponseJson = await shareLinkResponse.json();
+
+                    shareElement.style.display = "none";
+                    shareTextElement.parentElement.style.display = "table-row";
+                    shareTextElement.innerText = `A new ${contract.Difficulty.toLowerCase()} contract codenamed "${contract.Name}" is available. Travel to ${contract.Level} and eliminate ${contract.Targets.length} target${contract.Targets.length === 1 ? "" : "s"}. The score to beat is ${contract.Score}! ${shareLinkResponseJson}`;
+                });
+
+                const deleteElement = element.querySelector(".delete");
+                deleteElement.href = `/contracts/delete/${contract.Id}`;
+                deleteElement.addEventListener("click", async function (e) {
+                    e.preventDefault();
+
+                    if (confirm(`Are you sure you want to delete the contract '${contract.Name}'?`)) {
+                        await fetch(`/contracts/delete/${contract.Id}`);
+
+                        contractsElement.removeChild(element);
+                    }
+
+                    return false;
+                });
+
+                contractsElement.appendChild(element);
+            }
+        }
+
+        main();
+    </script>
+</body>
+</html>

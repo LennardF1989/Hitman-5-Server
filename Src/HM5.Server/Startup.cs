@@ -69,10 +69,19 @@ namespace HM5.Server
 
             services.AddTransient<FixAddMetricsContentTypeMiddleware>();
             services.AddTransient<RequestResponseLoggerMiddleware>();
+
+            services.AddSingleton<IContractsService, ContractsService>();
         }
 
-        public void Configure(IApplicationBuilder app, Options options)
+        public void Configure(IApplicationBuilder app, Options options, IContractsService contractsService)
         {
+            if (options.UseCustomContracts)
+            {
+                Directory.CreateDirectory("Contracts");
+
+                contractsService.RebuildCache();
+            }
+
             if (options.FixAddMetricsContentType)
             {
                 app.UseMiddleware<FixAddMetricsContentTypeMiddleware>();
