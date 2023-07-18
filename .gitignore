@@ -7,6 +7,7 @@ obj
 # Server
 /Src/HM5.Server/Contracts
 /Src/HM5.Server/Logs
+/Src/HM5.Server/userprofile.json
 
 # Other
 /Res

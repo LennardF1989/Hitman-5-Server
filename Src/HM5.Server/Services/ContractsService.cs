@@ -110,7 +110,7 @@ namespace HM5.Server.Services
             }
         }
 
-        public IEnumerable<Contract> GetContracts(HitmanController.SearchForContracts2Request request)
+        public IEnumerable<Contract> GetContracts(HitmanController.SearchForContracts2Request request, Func<Contract, bool> additionalFilter = null)
         {
             return _contractCache
                 .Values
@@ -118,7 +118,8 @@ namespace HM5.Server.Services
                     (request.LevelIndex == -1 || x.LevelIndex == request.LevelIndex) &&
                     (request.CheckpointId == -1 || x.CheckpointIndex == request.CheckpointId) &&
                     (request.Difficulty == -1 || x.Difficulty == request.Difficulty) &&
-                    (request.ContractId == string.Empty || x.DisplayId.Contains(request.ContractId))
+                    (request.ContractName == string.Empty || x.DisplayId.Contains(request.ContractName) || x.Title.Contains(request.ContractName, StringComparison.InvariantCultureIgnoreCase)) &&
+                    (additionalFilter == null || additionalFilter(x))
                 )
                 .OrderBy(x => x.DisplayId)
                 .Skip(request.StartIndex)
@@ -255,7 +256,6 @@ namespace HM5.Server.Services
                 CheckpointIndex = simpleContract.CheckpointIndex,
                 StartingOutfitToken = simpleContract.StartingOutfitToken,
                 StartingWeaponToken = simpleContract.StartingWeaponToken,
-                UserScore = simpleContract.Score,
                 HighestScoringFriendName = simpleContract.UserId,
                 HighestScoringFriendScore = simpleContract.Score
             };
