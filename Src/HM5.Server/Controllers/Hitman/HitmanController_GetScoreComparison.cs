@@ -1,7 +1,6 @@
 ﻿using HM5.Server.Attributes;
 using HM5.Server.Enums;
 using HM5.Server.Interfaces;
-using HM5.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HM5.Server.Controllers.Hitman
@@ -36,14 +35,7 @@ namespace HM5.Server.Controllers.Hitman
         [Route("GetScoreComparison")]
         public IActionResult GetScoreComparison([FromQuery] GetScoreComparisonRequest request)
         {
-            return JsonEntryResponse(new ScoreComparison
-            {
-                //NOTE: Has to be a SteamID
-                FriendName = "76561198161220058",
-                FriendScore = 1337,
-                CountryAverage = 101,
-                WorldAverage = 101
-            });
+            return JsonEntryResponse(_hitmanServer.GetScoreComparison(request));
         }
     }
 }

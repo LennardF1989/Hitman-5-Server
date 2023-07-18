@@ -19,24 +19,25 @@ namespace HM5.Server.Controllers
             return View("~/Views/Contracts.cshtml");
         }
 
-        [HttpGet("all")]
-        public IActionResult GetContracts()
+        [HttpGet("all/{page}/{filter=}")]
+        public IActionResult GetContracts(int page, string filter = null)
         {
-            const int pageSize = 1000;
+            const int pageSize = 20;
 
             var contracts = _contractsService.GetContracts(new HitmanController.SearchForContracts2Request
             {
                 LevelIndex = -1,
                 CheckpointId = -1,
                 Difficulty = -1,
-                ContractId = string.Empty,
-                StartIndex = 0,
+                ContractName = filter,
+                StartIndex = page * pageSize,
                 Range = pageSize
             });
 
             return Json(contracts.Select(x => new
             {
                 x.Id,
+                x.UserId,
                 Name = x.DisplayId,
                 x.Description,
                 Level = _contractsService.GetLevelName(x),
@@ -44,7 +45,7 @@ namespace HM5.Server.Controllers
                     .Select(y => y.Name)
                     .ToList(),
                 Difficulty = _contractsService.GetDifficultyName(x),
-                Score = x.UserScore
+                Score = x.HighestScoringFriendScore
             }));
         }
 
@@ -53,7 +54,7 @@ namespace HM5.Server.Controllers
         {
             var contractLink = _contractsService.GetShareableContractLink(contractId);
 
-            return Json($"http://localhost/contracts/create/{contractLink}");
+            return Json($"http://localhost:40147/contracts/create/{contractLink}");
         }
 
         [HttpGet("create/{compressedBase64Contract}")]

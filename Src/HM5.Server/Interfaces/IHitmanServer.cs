@@ -21,5 +21,6 @@ namespace HM5.Server.Interfaces
         List<Contract> SearchForContracts2(HitmanController.SearchForContracts2Request request);
         void UpdateUserInfo(HitmanController.UpdateUserInfoRequest request);
         void UploadContract(HitmanController.UploadContractRequest request);
+        ScoreComparison GetScoreComparison(HitmanController.GetScoreComparisonRequest request);
     }
 }

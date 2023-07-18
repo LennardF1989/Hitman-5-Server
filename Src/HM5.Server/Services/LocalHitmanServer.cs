@@ -98,10 +98,17 @@ namespace HM5.Server.Services
                 .GetContracts(new HitmanController.SearchForContracts2Request
                 {
                     LevelIndex = request.LevelIndex,
+                    CheckpointId = -1,
+                    Difficulty = -1,
                     StartIndex = 0,
                     Range = 1
-                }, contract => !_userProfile.PlayedContracts.ContainsKey(contract.Id))
-                .FirstOrDefault();
+                }, contract => GetPlayedContract(contract.Id)?.Plays == 0)
+            .FirstOrDefault();
+
+            if (contract != null)
+            {
+                contract.UserScore = GetPlayedContract(contract.Id)?.Score ?? 0;
+            }
 
             return contract;
         }
@@ -130,12 +137,7 @@ namespace HM5.Server.Services
         {
             SaveUserProfile(() =>
             {
-                if (!_userProfile.PlayedContracts.TryGetValue(request.ContractId, out var playedContract))
-                {
-                    playedContract = new UserProfile.PlayedContract();
-
-                    _userProfile.PlayedContracts[request.ContractId] = playedContract;
-                }
+                var playedContract = GetOrAddPlayedContract(request.ContractId);
 
                 playedContract.Plays++;
             });
@@ -147,12 +149,7 @@ namespace HM5.Server.Services
 
             SaveUserProfile(() =>
             {
-                if (!_userProfile.PlayedContracts.TryGetValue(request.LeaderboardId, out var playedContract))
-                {
-                    playedContract = new UserProfile.PlayedContract();
-
-                    _userProfile.PlayedContracts[request.LeaderboardId] = playedContract;
-                }
+                var playedContract = GetOrAddPlayedContract(request.LeaderboardId);
 
                 difference = request.Score - playedContract.Score;
 
@@ -162,7 +159,7 @@ namespace HM5.Server.Services
                     _userProfile.WalletAmount += difference;
                 }
 
-                _userProfile.PlayedContracts[request.LeaderboardId].Score = Math.Max(request.Score, playedContract.Score);
+                playedContract.Score = Math.Max(request.Score, playedContract.Score);
             });
 
             return difference;
@@ -204,7 +201,9 @@ namespace HM5.Server.Services
 
             contracts.ForEach(x =>
             {
-                if (!_userProfile.PlayedContracts.TryGetValue(x.Id, out var playedContract))
+                var playedContract = GetPlayedContract(x.Id);
+
+                if (playedContract == null)
                 {
                     return;
                 }
@@ -229,12 +228,33 @@ namespace HM5.Server.Services
 
         public void UploadContract(HitmanController.UploadContractRequest request)
         {
-            _contractsService.CreateContract(request);
+            var contractId = _contractsService.CreateContract(request);
 
             SaveUserProfile(() =>
             {
+                var playedContract = GetOrAddPlayedContract(contractId);
+                playedContract.Score = request.Score;
+
                 _userProfile.ContractsCreated++;
             });
+        }
+
+        public ScoreComparison GetScoreComparison(HitmanController.GetScoreComparisonRequest request)
+        {
+            var playedContract = GetPlayedContract(request.LeaderboardId);
+
+            if (playedContract == null)
+            {
+                return null;
+            }
+
+            return new ScoreComparison
+            {
+                FriendName = _userProfile.UserId,
+                FriendScore = playedContract.Score,
+                CountryAverage = 0,
+                WorldAverage = 0
+            };
         }
 
         private UserProfile LoadUserProfile()
@@ -275,6 +295,29 @@ namespace HM5.Server.Services
 
                 File.WriteAllText(USERPROFILE_PATH, JsonSerializer.Serialize(_userProfile));
             }
+        }
+
+        private UserProfile.PlayedContract GetPlayedContract(string contractId)
+        {
+            return _userProfile.PlayedContracts.TryGetValue(contractId, out var playedContract) 
+                ? playedContract 
+                : null;
+        }
+
+        private UserProfile.PlayedContract GetOrAddPlayedContract(string contractId)
+        {
+            var playedContract = GetPlayedContract(contractId);
+
+            if (playedContract != null)
+            {
+                return playedContract;
+            }
+
+            playedContract = new UserProfile.PlayedContract();
+
+            _userProfile.PlayedContracts[contractId] = playedContract;
+
+            return playedContract;
         }
     }
 }

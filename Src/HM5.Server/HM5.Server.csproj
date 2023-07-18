@@ -10,6 +10,7 @@
   <ItemGroup>
     <Content Remove="Contracts\**" />
     <None Remove="Logs\**" />
+    <Content Remove="userprofile.json" />
   </ItemGroup>
 
 </Project>

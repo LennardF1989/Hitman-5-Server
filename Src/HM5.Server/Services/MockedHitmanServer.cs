@@ -341,5 +341,17 @@ namespace HM5.Server.Services
         {
             //Do nothing
         }
+
+        public ScoreComparison GetScoreComparison(HitmanController.GetScoreComparisonRequest request)
+        {
+            return new ScoreComparison
+            {
+                //NOTE: Has to be a SteamID
+                FriendName = "76561198161220058",
+                FriendScore = 1337,
+                CountryAverage = 101,
+                WorldAverage = 101
+            };
+        }
     }
 }

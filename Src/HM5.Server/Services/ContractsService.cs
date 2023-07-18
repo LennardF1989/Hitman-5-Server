@@ -61,7 +61,7 @@ namespace HM5.Server.Services
             }
         }
 
-        public void CreateContract(HitmanController.UploadContractRequest request)
+        public string CreateContract(HitmanController.UploadContractRequest request)
         {
             var simpleContract = new SimpleContract
             {
@@ -79,10 +79,10 @@ namespace HM5.Server.Services
                 Score = request.Score
             };
 
-            CreateContract(simpleContract);
+            return CreateContract(simpleContract);
         }
 
-        public void CreateContract(string compressedBase64Contract)
+        public string CreateContract(string compressedBase64Contract)
         {
             using var inputStream = new MemoryStream(
                 Base64UrlTextEncoder.Decode(compressedBase64Contract)
@@ -95,7 +95,7 @@ namespace HM5.Server.Services
             
             var simpleContract = JsonSerializer.Deserialize<SimpleContract>(outputStream.ToArray());
 
-            CreateContract(simpleContract);
+            return CreateContract(simpleContract);
         }
 
         public void RemoveContract(string contractId)
@@ -118,7 +118,11 @@ namespace HM5.Server.Services
                     (request.LevelIndex == -1 || x.LevelIndex == request.LevelIndex) &&
                     (request.CheckpointId == -1 || x.CheckpointIndex == request.CheckpointId) &&
                     (request.Difficulty == -1 || x.Difficulty == request.Difficulty) &&
-                    (request.ContractName == string.Empty || x.DisplayId.Contains(request.ContractName) || x.Title.Contains(request.ContractName, StringComparison.InvariantCultureIgnoreCase)) &&
+                    (
+                        string.IsNullOrWhiteSpace(request.ContractName) ||
+                        x.DisplayId.Contains(request.ContractName) ||
+                        x.Title.Contains(request.ContractName, StringComparison.InvariantCultureIgnoreCase)
+                    ) &&
                     (additionalFilter == null || additionalFilter(x))
                 )
                 .OrderBy(x => x.DisplayId)
@@ -210,7 +214,7 @@ namespace HM5.Server.Services
             };
         }
 
-        private void CreateContract(SimpleContract simpleContract)
+        private string CreateContract(SimpleContract simpleContract)
         {
             var requestBytes = JsonSerializer.SerializeToUtf8Bytes(simpleContract);
             using var sha1 = SHA1.Create();
@@ -221,7 +225,7 @@ namespace HM5.Server.Services
 
             if (File.Exists(contractsPath))
             {
-                return;
+                return contractId;
             }
 
             var contract = MapSimpleContractToContract(contractId, simpleContract);
@@ -230,6 +234,8 @@ namespace HM5.Server.Services
             var contractJson = JsonSerializer.Serialize(simpleContract);
 
             File.WriteAllTextAsync(contractsPath, contractJson);
+
+            return contractId;
         }
 
         private Contract MapSimpleContractToContract(string contractId, SimpleContract simpleContract)
@@ -239,7 +245,7 @@ namespace HM5.Server.Services
                 Id = contractId,
                 DisplayId = simpleContract.Title,
                 UserId = simpleContract.UserId,
-                UserName = string.Empty,
+                UserName = simpleContract.UserId,
                 Title = simpleContract.Title,
                 Description = simpleContract.Description,
                 Targets = new TargetsWrapper
