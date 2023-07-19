@@ -282,7 +282,7 @@ namespace HM5.Server.Services
                 CheckpointIndex = contract.CheckpointIndex,
                 StartingOutfitToken = contract.StartingOutfitToken,
                 StartingWeaponToken = contract.StartingWeaponToken,
-                Score = contract.UserScore
+                Score = contract.HighestScoringFriendScore
             };
         }
     }
