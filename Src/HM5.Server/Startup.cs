@@ -70,9 +70,10 @@ namespace HM5.Server
             services.AddTransient<FixAddMetricsContentTypeMiddleware>();
             services.AddTransient<RequestResponseLoggerMiddleware>();
 
+            services.AddSingleton<IContractsService, ContractsService>();
+
             if (options.UseCustomContracts)
             {
-                services.AddSingleton<IContractsService, ContractsService>();
                 services.AddSingleton<IHitmanServer, LocalHitmanServer>();
             }
             else

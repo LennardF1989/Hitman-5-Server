@@ -92,7 +92,7 @@ namespace HM5.Server.Services
             {
                 compressedStream.CopyTo(outputStream);
             }
-            
+
             var simpleContract = JsonSerializer.Deserialize<SimpleContract>(outputStream.ToArray());
 
             return CreateContract(simpleContract);
@@ -150,7 +150,7 @@ namespace HM5.Server.Services
             return Base64UrlTextEncoder.Encode(memoryStream.ToArray());
         }
 
-        public  string GetLevelName(Contract contract)
+        public string GetLevelName(Contract contract)
         {
             var levelIndex = contract.LevelIndex;
             var checkpointIndex = contract.CheckpointIndex;
