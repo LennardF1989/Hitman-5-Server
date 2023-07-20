@@ -69,6 +69,7 @@ namespace HM5.Server
 
             services.AddTransient<FixAddMetricsContentTypeMiddleware>();
             services.AddTransient<RequestResponseLoggerMiddleware>();
+            services.AddTransient<SteamAuthMiddleware>();
 
             services.AddSingleton<IContractsService, ContractsService>();
 
@@ -79,6 +80,15 @@ namespace HM5.Server
             else
             {
                 services.AddSingleton<IHitmanServer, MockedHitmanServer>();
+            }
+
+            if (options.SteamService == Options.ESteamService.GameServer)
+            {
+                services.AddSingleton<ISteamService, SteamGameServerService>();
+            }
+            else if (options.SteamService == Options.ESteamService.WebApi)
+            {
+                services.AddSingleton<ISteamService, SteamWebApiService>();
             }
         }
 
@@ -96,6 +106,11 @@ namespace HM5.Server
                 app.UseMiddleware<RequestResponseLoggerMiddleware>();
             }
 
+            if (options.SteamService != Options.ESteamService.None)
+            {
+                app.UseMiddleware<SteamAuthMiddleware>();
+            }
+            
             app.UseMvc();
         }
     }
