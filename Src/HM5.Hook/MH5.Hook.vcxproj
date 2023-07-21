@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="hook_absolution.cpp" />
     <ClCompile Include="hook_sniper.cpp" />
+    <ClCompile Include="hook_steam.cpp" />
     <ClCompile Include="proxy.cpp" />
     <ClCompile Include="proxy_dinput8.cpp" />
     <ClCompile Include="hook.cpp" />
@@ -28,6 +29,7 @@
   <ItemGroup>
     <ClInclude Include="hook_absolution.h" />
     <ClInclude Include="hook_sniper.h" />
+    <ClInclude Include="hook_steam.h" />
     <ClInclude Include="proxy.h" />
     <ClInclude Include="hook.h" />
     <ClInclude Include="INIReader.h" />

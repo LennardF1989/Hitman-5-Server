@@ -25,7 +25,7 @@ void LoadProxyDll()
 		return;
 	}
 
-	oDirectInput8Create = (tDirectInput8Create)GetProcAddress(hLibrary, "DirectInput8Create");
+	oDirectInput8Create = (tDirectInput8Create)(void*)GetProcAddress(hLibrary, "DirectInput8Create");
 
 	LogFile << "Done!" << std::endl;
 }
@@ -35,7 +35,10 @@ extern "C" __declspec(dllexport) HRESULT WINAPI DirectInput8Create(HINSTANCE hin
 {
 	LogFile << "DirectInput8Create" << std::endl;
 
-	Hook->PostInitializeHook();
+	for (const auto& hook : Hooks)
+	{
+		hook->PreInitializeHook();
+	}
 
 	return oDirectInput8Create(hinst, dwVersion, riidltf, ppvOut, punkOuter);
 }

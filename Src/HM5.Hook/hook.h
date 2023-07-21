@@ -7,17 +7,19 @@
 #include <fstream>
 #include <ctime>
 #include <map>
+#include <vector>
 
 #include "MinHook.h"
 #include "INIReader.h"
 
 interface IHook {
+	virtual ~IHook() = default;
 	virtual void InitializeOptions() = 0;
 	virtual void PreInitializeHook() = 0;
 	virtual void PostInitializeHook() = 0;
 };
 
-extern IHook* Hook;
+extern std::vector<IHook*> Hooks;
 
 extern bool OptionsEnabled;
 extern bool OptionsLog;
@@ -26,7 +28,7 @@ extern std::ofstream LogFile;
 extern INIReader IniFile;
 
 inline void LogTime() {
-	std::time_t result = std::time(nullptr);
+	const std::time_t result = std::time(nullptr);
 
 	char* time = std::asctime(std::localtime(&result));
 	time[strlen(time) - 1] = 0;

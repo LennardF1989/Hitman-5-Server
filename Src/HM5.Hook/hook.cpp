@@ -1,12 +1,13 @@
 #include "hook.h"
 #include "hook_absolution.h"
 #include "hook_sniper.h"
+#include "hook_steam.h"
 #include "proxy.h"
 
 bool OptionsEnabled = false;
 bool OptionsLog = false;
 
-IHook* Hook;
+std::vector<IHook*> Hooks;
 std::ofstream LogFile;
 INIReader IniFile;
 
@@ -32,9 +33,16 @@ void InitializeOptions()
 		return;
 	}
 
+	const bool Debugger = IniFile.GetBoolean("options", "debugger", false);
+
+	if(Debugger)
+	{
+		MessageBoxA(nullptr, "Attach a debugger now!", "Debugger", 0);
+	}
+
 	OptionsLog = IniFile.GetBoolean("options", "log", false);
 
-	auto IsHitmanAbsolution = strcmp(
+	const auto IsHitmanAbsolution = strcmp(
 		IniFile.Get("options", "game", "hm5").c_str(),
 		"hm5"
 	) == 0;
@@ -43,16 +51,25 @@ void InitializeOptions()
 	{
 		LogFile << "Hitman Absolution" << std::endl;
 
-		Hook = (IHook*)new AbsolutionHook();
+		Hooks.push_back((IHook*)new AbsolutionHook());
 	}
 	else
 	{
 		LogFile << "Hitman Sniper Challenge" << std::endl;
 
-		Hook = (IHook*)new SniperHook();
+		Hooks.push_back((IHook*)new SniperHook());
 	}
 
-	Hook->InitializeOptions();
+	const auto SteamEnabled = IniFile.GetBoolean("options", "steam", false);
+
+	if(SteamEnabled)
+	{
+		Hooks.push_back((IHook*)new SteamHook());
+	}
+	for (const auto& hook : Hooks)
+	{
+		hook->InitializeOptions();
+	}
 }
 
 void InitializeHook()
@@ -61,7 +78,10 @@ void InitializeHook()
 
 	LogStatus("Initialize", MH_Initialize());
 
-	Hook->PreInitializeHook();
+	for (const auto& hook : Hooks)
+	{
+		hook->PreInitializeHook();
+	}
 }
 
 void DeinitializeHook()

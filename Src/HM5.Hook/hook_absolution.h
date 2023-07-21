@@ -4,7 +4,7 @@
 
 #include <string>
 
-class AbsolutionHook : IHook
+class AbsolutionHook final : IHook
 {
 public:
 	void InitializeOptions() override;
