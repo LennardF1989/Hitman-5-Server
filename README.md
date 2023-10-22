@@ -1,3 +1,5 @@
+> This repository has been archived, in favor of the [Cobra](https://github.com/thepeacockproject/Cobra) by [The Peacock Project](https://github.com/thepeacockproject/).
+
 # Hitman Absolution & Sniper Challenge Server
 This project emulates the server used by [Hitman: Absolution](https://store.steampowered.com/app/203140/Hitman_Absolution/) and the [Hitman: Sniper Challenge](https://steamcommunity.com/app/205930) and aims to restore all its features, including the Contracts feature.
 
